@@ -1,8 +1,15 @@
 import { NegociacaoController } from "./controllers/negociacao-controller.js";
 
 const controller = new NegociacaoController();
-const form = document.querySelector('.form')!;
-form.addEventListener('submit', event => {
-    event.preventDefault();
-    controller.adiciona();
-});
+
+const button = document.querySelector('button[type="submit"]');
+if (button) {
+    console.log('Botão encontrado');
+    button.addEventListener('click', event => {
+        event.preventDefault();  // Prevenir o envio do formulário
+        console.log('Evento de clique no botão capturado');
+        controller.adiciona();   // Chamando o método que adiciona a negociação
+    });
+} else {
+    console.log('Botão não encontrado');
+}

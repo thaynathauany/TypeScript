@@ -1,6 +1,7 @@
-import { MensagemView } from './../views/mensagem-views.js';
-import { NegociacoesView } from './../views/negociacoes-view.js';
-import { Negociacoes } from './../models/negociacoes.js';
+import { MensagemErrorView } from '../views/mensagem-views.js';
+import { MensagemView } from '../views/mensagem-views.js';
+import { NegociacoesView } from '../views/negociacoes-view.js';
+import { Negociacoes } from '../models/negociacoes.js';
 import { Negociacao } from "../models/negociacao.js";
 
 export class NegociacaoController {
@@ -10,6 +11,7 @@ export class NegociacaoController {
     private negociacoes = new Negociacoes();
     private negociacoesView = new NegociacoesView('#negociacoesView');
     private mensagemView = new MensagemView('#mensagemView');
+    private mensagemErrorView = new MensagemErrorView('#mensagemErrorView');
 
     constructor() {
         this.inputData = document.querySelector('#data')!;
@@ -19,10 +21,14 @@ export class NegociacaoController {
     }
 
     adiciona(): void {
+        if (this.inputData.value === '' || this.inputQuantidade.value === '' || this.inputValor.value === '') {
+            console.log('Campos estão vazios, exibindo mensagem de erro.');
+            this.mensagemErrorView.update('Todos os campos devem ser preenchidos!');
+            return;
+        }
+        console.log('Campos preenchidos, adicionando negociação.');
         const negociacao = this.criaNegociacao();
-        negociacao.data.setDate(12);
         this.negociacoes.adicionarNegociacao(negociacao);
-        console.log(this.negociacoes.listarNegociacoes());
         this.negociacoesView.update(this.negociacoes)
         this.mensagemView.update('Negociação adicionada com sucesso!');
         this.limparFormulario();
@@ -42,5 +48,17 @@ export class NegociacaoController {
         this.inputQuantidade.value = '';
         this.inputValor.value = '';
         this.inputData.focus();
+        this.limparMensagens();
+    }
+
+    private limparMensagens(): void {
+        // const mensagemView = document.querySelector('#mensagemView');
+        const mensagemErrorView = document.querySelector('#mensagemErrorView');
+        // if (mensagemView) {
+        //     mensagemView.innerHTML = '';
+        // }
+        if (mensagemErrorView) {
+            mensagemErrorView.innerHTML = '';
+        }
     }
 }
