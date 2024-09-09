@@ -2,7 +2,7 @@ import { View } from "./view.js";
 
 export class MensagemView extends View<string> {
 
-    template(modelAlert: string): string {
+    protected criarTemplate(modelAlert: string): string {
         return `
             <p class="alert alert-info">${modelAlert}</p>
         `
@@ -10,7 +10,7 @@ export class MensagemView extends View<string> {
 }
 
 export class MensagemErrorView extends View<string> {
-    template(modelError: string): string {
+    protected criarTemplate(modelError: string): string {
         return `
             <p class="alert alert-danger">${modelError}</p>
         `

@@ -1,8 +1,9 @@
-import { MensagemErrorView } from '../views/mensagem-views.js';
-import { MensagemView } from '../views/mensagem-views.js';
+import { MensagemErrorView } from '../views/mensagens-views.js';
+import { MensagemView } from '../views/mensagens-views.js';
 import { NegociacoesView } from '../views/negociacoes-view.js';
 import { Negociacoes } from '../models/negociacoes.js';
 import { Negociacao } from "../models/negociacao.js";
+import { DiasDaSemana } from '../enums/dias-da-semana.js';
 
 export class NegociacaoController {
     private inputData: HTMLInputElement;
@@ -13,31 +14,33 @@ export class NegociacaoController {
     private mensagemView = new MensagemView('#mensagemView');
     private mensagemErrorView = new MensagemErrorView('#mensagemErrorView');
 
+
     constructor() {
         this.inputData = document.querySelector('#data')!;
         this.inputQuantidade = document.querySelector('#quantidade')!;
         this.inputValor = document.querySelector('#valor')!;
-        this.negociacoesView.update(this.negociacoes);
-
-        // Adiciona event listeners para remover mensagens ao clicar nos inputs
+        // this.negociacoesView.update(this.negociacoes);
         this.inputData.addEventListener('focus', () => this.removerMensagens());
         this.inputQuantidade.addEventListener('focus', () => this.removerMensagens());
         this.inputValor.addEventListener('focus', () => this.removerMensagens());
     }
 
-    adiciona(): void {
+    public adiciona(): void {
         if (this.inputData.value === '' || this.inputQuantidade.value === '' || this.inputValor.value === '') {
             this.mensagemErrorView.update('Todos os campos devem ser preenchidos!');
             return;
         }
         const negociacao = this.criaNegociacao();
+        if (!this.ehDiaUtil(negociacao.data)) {
+            this.mensagemErrorView.update('É permitido negociações apenas em dias úteis')
+            return;
+        }
         this.negociacoes.adicionarNegociacao(negociacao);
-        this.negociacoesView.update(this.negociacoes);
-        this.mensagemView.update('Negociação adicionada com sucesso!');
         this.limparFormulario();
+        this.atualizaView();
     }
 
-    criaNegociacao(): Negociacao {
+    private criaNegociacao(): Negociacao {
         const exp = /-/g;
         const date = new Date(this.inputData.value.replace(exp, ','));
         const quantidade = parseInt(this.inputQuantidade.value);
@@ -45,14 +48,14 @@ export class NegociacaoController {
         return new Negociacao(date, quantidade, valor);
     }
 
-    limparFormulario(): void {
+    private limparFormulario(): void {
         this.inputData.value = '';
         this.inputQuantidade.value = '';
         this.inputValor.value = '';
         // this.inputData.focus();
     }
 
-    removerMensagens(): void {
+    private removerMensagens(): void {
         const mensagemViewElement = document.querySelector('#mensagemView');
         if (mensagemViewElement) {
             mensagemViewElement.innerHTML = '';
@@ -62,5 +65,14 @@ export class NegociacaoController {
         if (mensagemErrorViewElement) {
             mensagemErrorViewElement.innerHTML = '';
         }
+    }
+
+    private atualizaView(): void {
+        this.negociacoesView.update(this.negociacoes);
+        this.mensagemView.update('Negociação adicionada com sucesso!');
+    }
+
+    private ehDiaUtil(data: Date) {
+        return data.getDay() > DiasDaSemana.domingo && data.getDay() < DiasDaSemana.sabado
     }
 }

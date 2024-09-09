@@ -1,8 +1,9 @@
-import { MensagemErrorView } from '../views/mensagem-views.js';
-import { MensagemView } from '../views/mensagem-views.js';
+import { MensagemErrorView } from '../views/mensagens-views.js';
+import { MensagemView } from '../views/mensagens-views.js';
 import { NegociacoesView } from '../views/negociacoes-view.js';
 import { Negociacoes } from '../models/negociacoes.js';
 import { Negociacao } from "../models/negociacao.js";
+import { DiasDaSemana } from '../enums/dias-da-semana.js';
 export class NegociacaoController {
     constructor() {
         this.negociacoes = new Negociacoes();
@@ -12,8 +13,7 @@ export class NegociacaoController {
         this.inputData = document.querySelector('#data');
         this.inputQuantidade = document.querySelector('#quantidade');
         this.inputValor = document.querySelector('#valor');
-        this.negociacoesView.update(this.negociacoes);
-        // Adiciona event listeners para remover mensagens ao clicar nos inputs
+        // this.negociacoesView.update(this.negociacoes);
         this.inputData.addEventListener('focus', () => this.removerMensagens());
         this.inputQuantidade.addEventListener('focus', () => this.removerMensagens());
         this.inputValor.addEventListener('focus', () => this.removerMensagens());
@@ -24,10 +24,13 @@ export class NegociacaoController {
             return;
         }
         const negociacao = this.criaNegociacao();
+        if (!this.ehDiaUtil(negociacao.data)) {
+            this.mensagemErrorView.update('É permitido negociações apenas em dias úteis');
+            return;
+        }
         this.negociacoes.adicionarNegociacao(negociacao);
-        this.negociacoesView.update(this.negociacoes);
-        this.mensagemView.update('Negociação adicionada com sucesso!');
         this.limparFormulario();
+        this.atualizaView();
     }
     criaNegociacao() {
         const exp = /-/g;
@@ -51,5 +54,12 @@ export class NegociacaoController {
         if (mensagemErrorViewElement) {
             mensagemErrorViewElement.innerHTML = '';
         }
+    }
+    atualizaView() {
+        this.negociacoesView.update(this.negociacoes);
+        this.mensagemView.update('Negociação adicionada com sucesso!');
+    }
+    ehDiaUtil(data) {
+        return data.getDay() > DiasDaSemana.domingo && data.getDay() < DiasDaSemana.sabado;
     }
 }

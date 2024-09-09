@@ -3,10 +3,7 @@ export class View {
         this.elemento = document.querySelector(seletorCSS);
     }
     update(model) {
-        const template = this.template(model);
+        const template = this.criarTemplate(model);
         this.elemento.innerHTML = template;
-    }
-    template(model) {
-        throw Error('Classe filha precisa implementar o método');
     }
 }
