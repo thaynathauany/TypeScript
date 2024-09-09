@@ -13,14 +13,16 @@ export class NegociacaoController {
         this.inputQuantidade = document.querySelector('#quantidade');
         this.inputValor = document.querySelector('#valor');
         this.negociacoesView.update(this.negociacoes);
+        // Adiciona event listeners para remover mensagens ao clicar nos inputs
+        this.inputData.addEventListener('focus', () => this.removerMensagens());
+        this.inputQuantidade.addEventListener('focus', () => this.removerMensagens());
+        this.inputValor.addEventListener('focus', () => this.removerMensagens());
     }
     adiciona() {
         if (this.inputData.value === '' || this.inputQuantidade.value === '' || this.inputValor.value === '') {
-            console.log('Campos estão vazios, exibindo mensagem de erro.');
             this.mensagemErrorView.update('Todos os campos devem ser preenchidos!');
             return;
         }
-        console.log('Campos preenchidos, adicionando negociação.');
         const negociacao = this.criaNegociacao();
         this.negociacoes.adicionarNegociacao(negociacao);
         this.negociacoesView.update(this.negociacoes);
@@ -38,17 +40,16 @@ export class NegociacaoController {
         this.inputData.value = '';
         this.inputQuantidade.value = '';
         this.inputValor.value = '';
-        this.inputData.focus();
-        this.limparMensagens();
+        // this.inputData.focus();
     }
-    limparMensagens() {
-        // const mensagemView = document.querySelector('#mensagemView');
-        const mensagemErrorView = document.querySelector('#mensagemErrorView');
-        // if (mensagemView) {
-        //     mensagemView.innerHTML = '';
-        // }
-        if (mensagemErrorView) {
-            mensagemErrorView.innerHTML = '';
+    removerMensagens() {
+        const mensagemViewElement = document.querySelector('#mensagemView');
+        if (mensagemViewElement) {
+            mensagemViewElement.innerHTML = '';
+        }
+        const mensagemErrorViewElement = document.querySelector('#mensagemErrorView');
+        if (mensagemErrorViewElement) {
+            mensagemErrorViewElement.innerHTML = '';
         }
     }
 }
