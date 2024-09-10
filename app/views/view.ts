@@ -1,13 +1,26 @@
 export abstract class View<T> {
 
     protected elemento: HTMLElement;
+    private escapar: boolean = false;
 
-    constructor(seletorCSS: string) {
-        this.elemento = document.querySelector(seletorCSS)
+    constructor(seletorCSS: string, escapar?: boolean) {
+        const elemento = document.querySelector(seletorCSS)
+        if (elemento) {
+            this.elemento = elemento as HTMLElement;
+        }
+        else {
+            throw Error(`Seletor ${seletorCSS} não existe no DOM, verifique!`)
+        }
+        if (escapar) {
+            this.escapar = escapar
+        }
     }
 
     public update(model: T): void {
-        const template = this.criarTemplate(model)
+        let template = this.criarTemplate(model)
+        if (this.escapar) {
+            template = template.replace(/<script>[\s\S]*?<\/script>/, '');
+        }
         this.elemento.innerHTML = template;
     }
 

@@ -4,9 +4,9 @@ const button = document.querySelector('button[type="submit"]');
 if (button) {
     console.log('Botão encontrado');
     button.addEventListener('click', event => {
-        event.preventDefault(); // Prevenir o envio do formulário
+        event.preventDefault();
         console.log('Evento de clique no botão capturado');
-        controller.adiciona(); // Chamando o método que adiciona a negociação
+        controller.adiciona();
     });
 }
 else {
