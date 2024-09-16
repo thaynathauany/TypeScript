@@ -12,3 +12,13 @@ if (button) {
 } else {
     console.log('Botão não encontrado');
 }
+
+const buttonImport = document.querySelector('#botao-importa');
+if (buttonImport) {
+    buttonImport.addEventListener('click', () => {
+        controller.importaDados();
+    }
+    );
+} else {
+    throw Error('Botão não encontrado');
+}
