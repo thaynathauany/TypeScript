@@ -4,7 +4,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { negociacoesService } from './../services/negociacoes-services';
+import { NegociacoesService } from './../services/negociacoes-services.js';
 import { MensagemErrorView } from '../views/mensagens-views.js';
 import { MensagemView } from '../views/mensagens-views.js';
 import { NegociacoesView } from '../views/negociacoes-view.js';
@@ -14,13 +14,14 @@ import { DiasDaSemana } from '../enums/dias-da-semana.js';
 import { logarTempoDeExecucao } from '../decorators/logar-tempo-de-execucao.js';
 import { inspect } from '../decorators/inspect.js';
 import { domInjector } from '../decorators/dom-injector.js';
+import { imprimir } from '../utils/imprimir.js';
 export class NegociacaoController {
     constructor() {
         this.negociacoes = new Negociacoes();
         this.negociacoesView = new NegociacoesView('#negociacoesView');
         this.mensagemView = new MensagemView('#mensagemView');
         this.mensagemErrorView = new MensagemErrorView('#mensagemErrorView');
-        this.negociacoesService = new negociacoesService();
+        this.negociacoesService = new NegociacoesService();
         this.inputData.addEventListener('focus', () => this.removerMensagens());
         this.inputQuantidade.addEventListener('focus', () => this.removerMensagens());
         this.inputValor.addEventListener('focus', () => this.removerMensagens());
@@ -36,12 +37,21 @@ export class NegociacaoController {
             return;
         }
         this.negociacoes.adicionarNegociacao(negociacao);
+        imprimir(negociacao, this.negociacoes);
         this.limparFormulario();
         this.atualizaView();
     }
     importaDados() {
         this.negociacoesService
             .obterNegociacoesDoDia()
+            .then(negociacoesDeHoje => {
+            return negociacoesDeHoje.filter(negociacaoDeHoje => {
+                return !this.negociacoes
+                    .listarNegociacoes()
+                    .some(negociacao => negociacao
+                    .ehIgual(negociacaoDeHoje));
+            });
+        })
             .then(negociacoesDeHoje => {
             for (let negociacao of negociacoesDeHoje) {
                 this.negociacoes.adicionarNegociacao(negociacao);
@@ -85,3 +95,4 @@ __decorate([
     inspect,
     logarTempoDeExecucao(true)
 ], NegociacaoController.prototype, "adiciona", null);
+//# sourceMappingURL=negociacao-controller.js.map

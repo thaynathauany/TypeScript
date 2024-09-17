@@ -1,4 +1,4 @@
-import { negociacoesService } from './../services/negociacoes-services';
+import { NegociacoesService } from './../services/negociacoes-services.js';
 import { MensagemErrorView } from '../views/mensagens-views.js';
 import { MensagemView } from '../views/mensagens-views.js';
 import { NegociacoesView } from '../views/negociacoes-view.js';
@@ -8,6 +8,7 @@ import { DiasDaSemana } from '../enums/dias-da-semana.js';
 import { logarTempoDeExecucao } from '../decorators/logar-tempo-de-execucao.js';
 import { inspect } from '../decorators/inspect.js';
 import { domInjector } from '../decorators/dom-injector.js';
+import { imprimir } from '../utils/imprimir.js';
 
 export class NegociacaoController {
     @domInjector('#data')
@@ -20,7 +21,7 @@ export class NegociacaoController {
     private negociacoesView = new NegociacoesView('#negociacoesView');
     private mensagemView = new MensagemView('#mensagemView');
     private mensagemErrorView = new MensagemErrorView('#mensagemErrorView');
-    private negociacoesService = new negociacoesService();
+    private negociacoesService = new NegociacoesService();
 
     constructor() {
         // this.inputData = document.querySelector('#data')!;
@@ -49,6 +50,7 @@ export class NegociacaoController {
             return;
         }
         this.negociacoes.adicionarNegociacao(negociacao);
+        imprimir(negociacao, this.negociacoes);
         this.limparFormulario();
         this.atualizaView();
     }
@@ -56,6 +58,14 @@ export class NegociacaoController {
     public importaDados(): void {
         this.negociacoesService
             .obterNegociacoesDoDia()
+            .then(negociacoesDeHoje => {
+                return negociacoesDeHoje.filter(negociacaoDeHoje => {
+                    return !this.negociacoes
+                        .listarNegociacoes()
+                        .some(negociacao => negociacao
+                            .ehIgual(negociacaoDeHoje))
+                })
+            })
             .then(negociacoesDeHoje => {
                 for (let negociacao of negociacoesDeHoje) {
                     this.negociacoes.adicionarNegociacao(negociacao);

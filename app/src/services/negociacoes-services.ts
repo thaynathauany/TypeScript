@@ -1,6 +1,8 @@
+import { NegociacoesDoDia } from '../interfaces/negociacao-do-dia.js';
 import { Negociacao } from '../models/negociacao.js';
 
-export class negociacoesService {
+export class NegociacoesService {
+
     public obterNegociacoesDoDia(): Promise<Negociacao[]> {
         return fetch('http://localhost:8080/dados')
             .then(res => res.json())
@@ -12,6 +14,6 @@ export class negociacoesService {
                         dadoDeHoje.montante
                     )
                 })
-            })
+            });
     }
 }

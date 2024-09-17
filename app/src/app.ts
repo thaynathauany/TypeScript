@@ -13,7 +13,7 @@ if (button) {
     console.log('Botão não encontrado');
 }
 
-const buttonImport = document.querySelector('#botao-importa');
+const buttonImport = document.querySelector('#botao-importar');
 if (buttonImport) {
     buttonImport.addEventListener('click', () => {
         controller.importaDados();
